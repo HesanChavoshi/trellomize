@@ -94,7 +94,6 @@ class Task:
         return self.comments
 
 
-# Create a task
 my_task = Task(
     identification_code=1,
     title="Sample Task",
@@ -113,4 +112,4 @@ my_task = Task(
 # print(my_task.get_priority())
 # print(my_task.get_status())
 # print(my_task.get_priority())
-print(Priority.HIGH)
+# print(Priority.HIGH)
