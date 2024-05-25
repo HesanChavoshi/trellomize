@@ -35,7 +35,8 @@ class Project:
                     task.assign(member)
                     print(f"Task {task.title} assigned to {member}.")
 
-    def table(self, member):
+    # def table(self, member):
+    def __rich__(self, member):
         console = Console()
         table = Table(title=self.title)
 
