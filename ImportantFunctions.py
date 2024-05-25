@@ -44,9 +44,9 @@ def sign_up():
         time.sleep(5)
 
     os.system('cls' if os.name == 'nt' else 'clear')
-    user = User.User(username, age, password, email)
-    dict_data = {"username": user.username, "age": user.age, "password": user.password, "email": user.email}
-    list_data.append(dict_data)
+    tasks = []
+    user = User.User(username, age, password, email, tasks)
+    list_data.append(user.dict)
     UserInfo.save_user_info(list_data)
     print("Congratulations, you managed to make an account in our program! We advice you to check out your account because there might be surprise for you;)")
     time.sleep(10)
@@ -70,22 +70,16 @@ def login():
             time.sleep(3)
             break
     user_data = find_user(username, list_data, 0)
-    user = User.User(user_data["username"], user_data["age"], user_data["password"], user_data["email"])
+    user = User.User(user_data["username"], user_data["age"], user_data["password"], user_data["email"], user_data["tasks"])
     return user
 
 
 def create_project():
-    os.system('cls' if os.name == 'nt' else 'clear')
     list_data = UserInfo.read_user_info()
-    print("Here you can create a project to your liking. Answer the questions carefully.")
-    time.sleep(3)
-
-    os.system('cls' if os.name == 'nt' else 'clear')
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     title = input("Enter the title for the project: ")
     random_id = str(uuid.uuid4())
     information = input("Enter the username or email of the people you want to assign this task to with a comma between their information: ").split(',')
-    member = []
     for i in information:
         check = re.match(pattern, i)
         if check and find_user(i, list_data, 1) != "This user does not exist.":
@@ -200,4 +194,4 @@ def find_user(info, data, check):
     return "This user does not exist."
 
 
-# sign_up()
+sign_up()

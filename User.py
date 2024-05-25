@@ -1,11 +1,15 @@
 # User.py
 
+
 class User:
-    def __init__(self, username, age, password, email):
+    def __init__(self, username, age, password, email, tasks: list):
         self.username = username
         self.age = age
         self.password = password
         self.email = email
+        self.tasks = tasks
+        self.dict = {"username": self.username, "age": self.age, "password": self.password, "email": self.email,
+                     "tasks": self.tasks}
 
     def set_name(self, username):
         self.username = username
@@ -36,3 +40,12 @@ class User:
         print(self.age)
         print(self.password)
         print(self.email)
+
+    def add_task(self, task):
+        if task not in self.tasks:
+            self.tasks.append(task)
+
+    def delete_task(self, task):
+        if task in self.tasks:
+            self.tasks.remove(task)
+
