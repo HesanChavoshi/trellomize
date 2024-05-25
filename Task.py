@@ -1,6 +1,3 @@
-# Task.py
-# Status
-# Priority
 from enum import Enum
 import string
 
