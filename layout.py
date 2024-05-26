@@ -18,10 +18,9 @@ def main():
     action = inquirer.prompt(questions)['action']
 
     if action == 'Login':
-        ImportantFunctions.login()
+        info = ImportantFunctions.login()
     elif action == 'Signup':
         ImportantFunctions.sign_up()
-
 
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -46,7 +45,7 @@ def main():
         Questions = [
             inquirer.List('Action',
                           message="What do you want to do?",
-                          choices=['Creat Project', 'Logout'])
+                          choices=['Create Project', 'Logout'])
         ]
         Action = inquirer.prompt(Questions)['Action']
 

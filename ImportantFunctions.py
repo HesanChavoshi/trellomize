@@ -8,6 +8,7 @@ import os
 import re
 import uuid
 import logging
+import inquirer
 logging.basicConfig(level=logging.INFO, filename='app.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
 
 
@@ -21,10 +22,22 @@ def sign_up():
 
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        username = input("Enter Your Username: ")
-        age = int(input("Enter Your Age: "))
-        password = input("Enter a Password: ")
-        email = input("Enter Your Email: ")
+        # username = input("Enter Your Username: ")
+        # age = int(input("Enter Your Age: "))
+        # password = input("Enter a Password: ")
+        # email = input("Enter Your Email: ")
+
+        questions = [
+            inquirer.Text('username', message="Enter Your Username"),
+            inquirer.Text('age', message="Enter Your Age"),
+            inquirer.Password('password', message="Enter a Password"),
+            inquirer.Text('email', message="Enter Your Email"),
+        ]
+        answers = inquirer.prompt(questions)
+        username = answers['username']
+        password = answers['password']
+        age = int(answers['age'])
+        email = answers['email']
 
         if valid_username(username, user_data) == 1:
             print("This username is in use, please try another one.")
@@ -66,8 +79,15 @@ def login():
 
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        username = input("Please enter your username: ")
-        password = input("Please enter your password: ")
+        # username = input("Please enter your username: ")
+        # password = input("Please enter your password: ")
+        questions = [
+            inquirer.Text('username', message="Enter Your Username"),
+            inquirer.Password('password', message="Enter a Password"),
+        ]
+        answers = inquirer.prompt(questions)
+        username = answers['username']
+        password = answers['password']
         if not valid_info(username, password, user_data):
             print("Login was unsuccessful! Wrong username or password.")
             time.sleep(3)
@@ -207,4 +227,4 @@ def find_project(info, data):
 
 
 # sign_up()
-login()
+# login()
