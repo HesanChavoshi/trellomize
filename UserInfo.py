@@ -7,7 +7,7 @@ def read_user_info():
             data = json.load(file)
         return data
     except FileNotFoundError:
-        print("user.json file not found.")
+        print("users.json file not found.")
         return None
     except json.JSONDecodeError:
         print("Error decoding JSON data.")
@@ -34,3 +34,70 @@ def delete_user_info():
         print(f"Error saving data: {e}")
         return False
 
+
+def read_project_info():
+    try:
+        with open('projects.json', 'r') as file:
+            data = json.load(file)
+        return data
+    except FileNotFoundError:
+        print("projects.json file not found.")
+        return None
+    except json.JSONDecodeError:
+        print("Error decoding JSON data.")
+        return None
+
+
+def save_project_info(data):
+    try:
+        with open('projects.json', 'w') as file:
+            json.dump(data, file, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving data: {e}")
+        return False
+
+
+def delete_project_info():
+    data = []
+    try:
+        with open('projects.json', 'w') as file:
+            json.dump(data, file, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving data: {e}")
+        return False
+
+
+def read_task_info():
+    try:
+        with open('tasks.json', 'r') as file:
+            data = json.load(file)
+        return data
+    except FileNotFoundError:
+        print("tasks.json file not found.")
+        return None
+    except json.JSONDecodeError:
+        print("Error decoding JSON data.")
+        return None
+
+
+def save_task_info(data):
+    try:
+        with open('tasks.json', 'w') as file:
+            json.dump(data, file, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving data: {e}")
+        return False
+
+
+def delete_task_info():
+    data = []
+    try:
+        with open('tasks.json', 'w') as file:
+            json.dump(data, file, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving data: {e}")
+        return False

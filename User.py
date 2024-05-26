@@ -7,7 +7,7 @@ class User:
         self.tasks = tasks
         self.projects = projects
         self.dict = {"username": self.username, "age": self.age, "password": self.password, "email": self.email,
-                     "tasks": self.tasks}
+                     "tasks": self.tasks, "projects": self.projects}
 
     def set_name(self, username):
         self.username = username

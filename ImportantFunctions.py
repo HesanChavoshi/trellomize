@@ -199,12 +199,24 @@ def find_user(info, data, check):
     return "This user does not exist."
 
 
+def change_user_info(user: User, data: list):
+    for i in range(len(data)):
+        if user.username == data[i]["username"]:
+            data.remove(data[i])
+            break
+    UserInfo.save_user_info(data)
+
+
 def find_project(info, data):
     for i in data:
         if info == i["ID"]:
             return i
-    return "This user does not exist."
+    return "This project does not exist."
 
 
-# sign_up()
-login()
+def change_project_info(project: Project, data: list):
+    for i in range(len(data)):
+        if project.id == data[i]["ID"]:
+            data.remove(data[i])
+            break
+    UserInfo.save_project_info(data)
