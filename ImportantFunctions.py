@@ -50,7 +50,7 @@ def sign_up():
     os.system('cls' if os.name == 'nt' else 'clear')
     projects = []
     tasks = []
-    user = User.User(username, age, password, email, tasks, projects)
+    user = User.User(username, age, password, email)
     user_data.append(user.dict)
     UserInfo.save_user_info(user_data)
     print("Congratulations, you managed to make an account in our program! We advice you to check out your account because there might be surprise for you;)")
@@ -77,7 +77,7 @@ def login():
             log.info("'" + username + "' has login into his/her account.")
             break
     found_user = find_user(username, user_data, 0)
-    user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"], found_user["tasks"], found_user["projects"])
+    user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"])
     return user
 
 
@@ -214,9 +214,9 @@ def find_project(info, data):
     return "This project does not exist."
 
 
-def change_project_info(project: Project, data: list):
+def change_project_info(pro: project, data: list):
     for i in range(len(data)):
-        if project.id == data[i]["ID"]:
+        if pro.id == data[i]["ID"]:
             data.remove(data[i])
             break
     UserInfo.save_project_info(data)
