@@ -49,8 +49,8 @@ class User:
 
     def add_project(self, project):
         if project not in self.projects:
-            self.tasks.append(project)
+            self.projects.append(project)
 
     def delete_project(self, project):
         if project in self.projects:
-            self.tasks.remove(project)
+            self.projects.remove(project)
