@@ -1,13 +1,14 @@
 class User:
-    def __init__(self, username, age, password, email, tasks: list, projects: list):
+    def __init__(self, username, age, password, email):
         self.username = username
         self.age = age
         self.password = password
         self.email = email
-        self.tasks = tasks
-        self.projects = projects
+        self.is_active = True
+        self.tasks = []
+        self.projects = []
         self.dict = {"username": self.username, "age": self.age, "password": self.password, "email": self.email,
-                     "tasks": self.tasks}
+                     "tasks": self.tasks, "projects": self.projects}
 
     def set_name(self, username):
         self.username = username
@@ -49,8 +50,14 @@ class User:
 
     def add_project(self, project):
         if project not in self.projects:
-            self.tasks.append(project)
+            self.projects.append(project)
 
     def delete_project(self, project):
         if project in self.projects:
-            self.tasks.remove(project)
+            self.projects.remove(project)
+
+    def change_is_active(self):
+        if self.is_active:
+            self.is_active = False
+        else:
+            self.is_active = True

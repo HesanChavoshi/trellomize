@@ -3,6 +3,7 @@ from rich.console import Console
 from rich.table import Table
 import json
 
+
 class Project:
     def __init__(self, ID, Title, Leader):
         self.id = ID
@@ -10,14 +11,15 @@ class Project:
         self.leader = Leader
         self.members = []
         self.tasks = []
+        self.dict = {"ID": self.id, "title": self.title, "leader": self.leader, "members": self.members,
+                     "tasks": self.tasks}
 
     def get_id(self):
         return self.id
     
     def get_title(self):
         return self.title
-    
-    
+
     def add_member(self, name):
         if name not in self.members:
             self.members.append(name)
@@ -73,15 +75,15 @@ class Project:
     def update_table(self, member):
         pass
 
-    def save_project_data(self):
-        data = {"id":self.id, "title":self.title, "leader":self.leader, "tasks":self.tasks, "members":self.members}
-        try:
-            with open(f'{self.title}.json', 'w') as file:
-                json.dump(data, file, indent=4)
-            return True
-        except Exception as e:
-            print(f"Error saving data: {e}")
-            return False
+    # def save_project_data(self):
+    #     data = {"id":self.id, "title":self.title, "leader":self.leader, "tasks":self.tasks, "members":self.members}
+    #     try:
+    #         with open(f'{self.title}.json', 'w') as file:
+    #             json.dump(data, file, indent=4)
+    #         return True
+    #     except Exception as e:
+    #         print(f"Error saving data: {e}")
+    #         return False
     
     def __del__(self):
         print("Project deleted")
