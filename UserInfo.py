@@ -8,10 +8,10 @@ def read_user_info():
         return data
     except FileNotFoundError:
         print("users.json file not found.")
-        return None
+        return []
     except json.JSONDecodeError:
         print("Error decoding JSON data.")
-        return None
+        return []
 
 
 def save_user_info(data):
