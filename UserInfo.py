@@ -101,3 +101,16 @@ def delete_task_info():
     except Exception as e:
         print(f"Error saving data: {e}")
         return False
+
+
+def read_admin_info():
+    try:
+        with open('admin.json', 'r') as file:
+            data = json.load(file)
+        return data
+    except FileNotFoundError:
+        print("users.json file not found.")
+        return []
+    except json.JSONDecodeError:
+        print("Error decoding JSON data.")
+        return []

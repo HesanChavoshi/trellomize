@@ -28,6 +28,14 @@ class Project:
         if name in self.members:
             self.members.remove(name)
 
+    def add_task(self, task_id):
+        if task_id not in self.tasks:
+            self.tasks.append(task_id)
+
+    def delete_task(self, task_id):
+        if task_id in self.tasks:
+            self.tasks.remove(tasks)
+
     def assign_task(self, task_id, member):
         if member not in self.members:
             print(f"Member {member} is not part of the project.")
@@ -85,5 +93,5 @@ class Project:
     #         print(f"Error saving data: {e}")
     #         return False
     
-    def __del__(self):
-        print("Project deleted")
+    # def __del__(self):
+    #     print("Project deleted")
