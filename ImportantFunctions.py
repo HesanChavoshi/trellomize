@@ -8,6 +8,8 @@ import os
 import re
 import uuid
 import logging
+import inquirer
+import bcrypt
 logging.basicConfig(level=logging.INFO, filename='app.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
 
 
@@ -21,10 +23,22 @@ def sign_up():
 
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        username = input("Enter Your Username: ")
-        age = int(input("Enter Your Age: "))
-        password = input("Enter a Password: ")
-        email = input("Enter Your Email: ")
+        # username = input("Enter Your Username: ")
+        # age = int(input("Enter Your Age: "))
+        # password = input("Enter a Password: ")
+        # email = input("Enter Your Email: ")
+
+        questions = [
+            inquirer.Text('username', message="Enter Your Username"),
+            inquirer.Text('age', message="Enter Your Age"),
+            inquirer.Password('password', message="Enter a Password"),
+            inquirer.Text('email', message="Enter Your Email"),
+        ]
+        answers = inquirer.prompt(questions)
+        username = answers['username']
+        password = answers['password']
+        age = int(answers['age'])
+        email = answers['email']
 
         if valid_username(username, user_data) == 1:
             print("This username is in use, please try another one.")
@@ -48,9 +62,8 @@ def sign_up():
         time.sleep(5)
 
     os.system('cls' if os.name == 'nt' else 'clear')
-    projects = []
-    tasks = []
-    user = User.User(username, age, password, email)
+    hashed = hash_password(password).decode('utf-8')
+    user = User.User(username, age, hashed, email)
     user_data.append(user.dict)
     UserInfo.save_user_info(user_data)
     print("Congratulations, you managed to make an account in our program! We advice you to check out your account because there might be surprise for you;)")
@@ -66,8 +79,16 @@ def login():
 
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        username = input("Please enter your username: ")
-        password = input("Please enter your password: ")
+        # username = input("Please enter your username: ")
+        # password = input("Please enter your password: ")
+        questions = [
+            inquirer.Text('username', message="Enter Your Username"),
+            inquirer.Password('password', message="Enter a Password"),
+        ]
+        answers = inquirer.prompt(questions)
+        username = answers['username']
+        password = answers['password']
+        # hashed = hash_password(password).decode('utf-8')
         if not valid_info(username, password, user_data):
             print("Login was unsuccessful! Wrong username or password.")
             time.sleep(3)
@@ -81,24 +102,48 @@ def login():
     return user
 
 
-def create_project():
-    list_data = UserInfo.read_user_info()
+def create_project(user: User):
+    print("In this part you can create a project and add members to it.")
+    time.sleep(3)
+    user_data = UserInfo.read_user_info()
+    log = logging.getLogger(__name__)
+    project_data = UserInfo.read_project_info()
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+
     title = input("Enter the title for the project: ")
     random_id = str(uuid.uuid4())
+    leader = user.username
     information = input("Enter the username or email of the people you want to assign this task to with a comma between their information: ").split(',')
-    new_project = project.Project(random_id, title)
+    new_project = project.Project(random_id, title, leader)
+
     for i in information:
-        check = re.match(pattern, i)
-        if check and find_user(i, list_data, 1) != "This user does not exist.":
-            new_project.members.append(find_user(i, list_data, 1))
-        elif not check and find_user(i, list_data, 0) != "This user does not exist.":
-            new_project.members.append(find_user(i, list_data, 0))
-    
+        if i != "":
+            user_found = find_user(i, user_data, re.match(pattern, i) is not None)
+            if user_found != "This user does not exist.":
+                new_project.members.append(user_found["username"])
+                new_user = User.User(user_found["username"], user_found["age"], user_found["password"], user_found["email"])
+                new_user.add_project(new_project.id)
+                user_data.append(new_user.dict)
+                change_user_info(new_user, user_data)
+            else:
+                print(user_found)
+        else:
+            break
+
+    project_data.append(new_project.dict)
+    UserInfo.save_project_info(project_data)
+
+    user.add_project(new_project.id)
+    user_data.append(user.dict)
+    change_user_info(user, user_data)
+    log.info("'" + user.username + "' has made the project " + new_project.title)
+
 
 def create_task():
     os.system('cls' if os.name == 'nt' else 'clear')
     list_data = UserInfo.read_user_info()
+    project_data = UserInfo.read_project_info()
+    task_data = UserInfo.read_task_info()
     print("In this part you can create a task and assign it to a member of your project.")
     time.sleep(3)
 
@@ -144,13 +189,13 @@ def create_task():
         status = Task.Status.ARCHIVED
 
 
-def valid_username(username, data):
-    for i in username:
-        if i == '@':
-            return 2
-    for i in data:
-        if username == i["username"]:
-            return 1
+def valid_username(username, data: list):
+    if '@' in username:
+        return 2
+    if data is not None or isinstance(data, list):
+        for i in data:
+            if 'username' in i and username == i["username"]:
+                return 1
     return 0
 
 
@@ -171,18 +216,18 @@ def valid_email(email, data):
     check = re.match(pattern, email)
     if not check:
         return 2
-    for i in data:
-        if email == i["email"]:
-            return 1
+    if data is not None or isinstance(data, list):
+        for i in data:
+            if email == i["email"]:
+                return 1
     return 0
 
 
-def valid_info(username, password, data):
-    for i in data:
-        if username == i["username"]:
-            for j in data:
-                if password == j["password"]:
-                    return True
+def valid_info(username, user_password, data):
+    for user_record in data:
+        if username == user_record["username"]:
+            if check_password(user_record["password"], user_password):
+                return True
             return False
     return False
 
@@ -220,3 +265,29 @@ def change_project_info(pro: project, data: list):
             data.remove(data[i])
             break
     UserInfo.save_project_info(data)
+
+
+# Function to hash a password
+def hash_password(password):
+    # Generate a salt
+    salt = bcrypt.gensalt()
+    # Hash the password with the salt
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed
+
+
+def check_password(hashed_password, user_password):
+    # Convert the hashed password to bytes if it's a string
+    hashed_bytes = hashed_password.encode('utf-8') if isinstance(hashed_password, str) else hashed_password
+
+    # Hash the entered password and compare it with the stored hashed password
+    return bcrypt.checkpw(user_password.encode('utf-8'), hashed_bytes)
+
+
+# sign_up()
+login()
+# dataset = UserInfo.read_user_info()
+# user = User.User("mohsen", 18, "1234567890", "mohsen@gmail.com")
+# dataset.append(user.dict)
+# UserInfo.save_user_info(dataset)
+# print("hello")
