@@ -5,12 +5,12 @@ import json
 
 
 class Project:
-    def __init__(self, ID, Title, Leader):
-        self.id = ID
-        self.title = Title
-        self.leader = Leader
-        self.members = []
-        self.tasks = []
+    def __init__(self, id, title, leader, members: list, tasks: list):
+        self.id = id
+        self.title = title
+        self.leader = leader
+        self.members = members
+        self.tasks = tasks
         self.dict = {"ID": self.id, "title": self.title, "leader": self.leader, "members": self.members,
                      "tasks": self.tasks}
 
@@ -24,7 +24,7 @@ class Project:
         if name not in self.members:
             self.members.append(name)
 
-    def delete_member(self, name):
+    def remove_member(self, name):
         if name in self.members:
             self.members.remove(name)
 
@@ -32,7 +32,7 @@ class Project:
         if task_id not in self.tasks:
             self.tasks.append(task_id)
 
-    def delete_task(self, task_id):
+    def remove_task(self, task_id):
         if task_id in self.tasks:
             self.tasks.remove(tasks)
 
