@@ -37,8 +37,7 @@ class Project:
                     task.assign(member)
                     print(f"Task {task.title} assigned to {member}.")
 
-    # def table(self, member):
-    def __rich__(self, member):
+    def table(self, member):
         console = Console()
         table = Table(title=self.title)
 
@@ -69,8 +68,8 @@ class Project:
                     task.priority,
                 )
 
-        console.print(table)
-        # return table
+        # console.print(table)
+        return table
 
     def update_table(self, member):
         pass
@@ -84,6 +83,3 @@ class Project:
     #     except Exception as e:
     #         print(f"Error saving data: {e}")
     #         return False
-    
-    def __del__(self):
-        print("Project deleted")

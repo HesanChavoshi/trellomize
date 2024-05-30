@@ -17,10 +17,11 @@ def main():
     ]
     action = inquirer.prompt(questions)['action']
 
+    user = None
     if action == 'Login':
-        info = ImportantFunctions.login()
+        user = ImportantFunctions.login()
     elif action == 'Signup':
-        ImportantFunctions.sign_up()
+        user = ImportantFunctions.sign_up()
 
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -28,7 +29,7 @@ def main():
     layout.split_column(
         Layout(name="header", size=3),
         Layout(name="main", ratio=1),
-        Layout(name="footer"),
+        Layout(name="table"),
     )
 
     layout["main"].split_row(
@@ -39,20 +40,31 @@ def main():
     header = Panel(Text("Welcome to Trellomize", style="bold white"), style="bold blue")
     layout["header"].update(header)
 
+    profile = Panel(Text("Username: " + user.username + '\n' + "Age: " + str(user.age) + '\n' + "Email: " + user.email, style="bold white"), style="bold blue")
+    layout["profile"].update(profile)
+
+    projects = Panel(Text('\n'.join(user.projects), style="bold white"), style="bold blue")
+    layout["projects"].update(projects)
+
     console.print(layout)
 
+    new = None
+    table = None
     while True:
         Questions = [
             inquirer.List('Action',
                           message="What do you want to do?",
-                          choices=['Create Project', 'Logout'])
+                          choices=['Create Project', 'Create Task', 'Logout'])
         ]
         Action = inquirer.prompt(Questions)['Action']
 
         if Action == 'Create Project':
-            ImportantFunctions.create_project()
+            new = ImportantFunctions.create_project(user)
+            table = Panel(new.table(user), style="bold blue")
+            layout['table'].update(table)
         elif Action == 'Create Task':
             ImportantFunctions.create_task()
+            layout['table'].update(table)
         elif Action == 'Logout':
             break
 
