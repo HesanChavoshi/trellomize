@@ -2,6 +2,8 @@
 from rich.console import Console
 from rich.table import Table
 import json
+import ImportantFunctions
+import UserInfo
 
 
 class Project:
@@ -41,7 +43,7 @@ class Project:
             print(f"Member {member} is not part of the project.")
         else:
             for task in self.tasks:
-                if task.id ==  task_id:
+                if task.id == task_id:
                     task.add_assignee(member)
                     print(f"Task {task.title} assigned to {member}.")
 
@@ -57,27 +59,29 @@ class Project:
         table.add_column("Priority", style="red", justify="center")
 
         for task in self.tasks:
-            if member in task.assignees:
+            task_data = UserInfo.read_task_info()
+            new_task = ImportantFunctions.find_task(task, task_data)
+            if member in new_task.assignees:
                 table.add_row(
-                    task.title,
-                    task.description,
-                    task.start,
-                    task.end,
-                    task.assignees,
-                    task.priority,
-                    task.history,
-                    task.comments,
+                    new_task.title,
+                    new_task.description,
+                    new_task.start,
+                    new_task.end,
+                    new_task.assignees,
+                    new_task.priority,
+                    new_task.history,
+                    new_task.comments,
                 )
-            elif len(task.assignees) == 0:
+            elif len(new_task.assignees) == 0:
                 table.add_row(
-                    task.title,
-                    task.description,
-                    task.start,
-                    task.end,
-                    task.assignees,
-                    task.priority,
-                    task.history,
-                    task.comments,
+                    new_task.title,
+                    new_task.description,
+                    new_task.start,
+                    new_task.end,
+                    new_task.assignees,
+                    new_task.priority,
+                    new_task.history,
+                    new_task.comments,
                 )
 
         return table

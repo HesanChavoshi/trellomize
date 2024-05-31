@@ -1,0 +1,13 @@
+[
+    {
+        "username": "mohsen",
+        "age": 18,
+        "password": "$2b$12$7G9PY6qE0ChFWhVRHgpqNuoiWcyGso3HOHIUKp5Dx0cxbknoh.BMm",
+        "email": "mohsen@gmail.com",
+        "status": "on",
+        "tasks": [],
+        "projects": [
+            "d31c30db-ca19-4efa-a553-77a21d4c62c7"
+        ]
+    }
+]
