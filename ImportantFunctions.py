@@ -207,10 +207,11 @@ def login():
             break
     found_user = find_user(username, user_data, 0)
     user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"])
-    if user.status == 'on':
-        return user
-    else:
-        return "This user has been baned from using this program."
+    # if user.status == 'on':
+    #     return user
+    # else:
+    #     return "This user has been baned from using this program."
+    return user
 
 
 def admin_login():
@@ -260,13 +261,14 @@ def create_project(user: User.User):
         else:
             break
 
-    project_data.append(new_project.dict)
+    # project_data.append(new_project.dict)
     UserInfo.save_project_info(project_data)
 
     user.add_project(new_project.id)
     user_data.append(user.dict)
     change_user_info(user, user_data)
     log.info("'" + user.username + "' has made the project '" + new_project.title + "'")
+    return new_project
 
 
 # This one as well gets the information needed and then saves them.

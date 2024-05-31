@@ -34,7 +34,7 @@ class Project:
 
     def delete_task(self, task_id):
         if task_id in self.tasks:
-            self.tasks.remove(tasks)
+            self.tasks.remove(task_id)
 
     def assign_task(self, task_id, member):
         if member not in self.members:

@@ -43,6 +43,12 @@ def main():
     profile = Panel(Text("Username: " + user.username + '\n' + "Age: " + str(user.age) + '\n' + "Email: " + user.email, style="bold white"), style="bold blue")
     layout["profile"].update(profile)
 
+    # result = []
+    # for i in user.projects:
+    #     a = 
+    #     result.append(a)
+
+
     projects = Panel(Text('\n'.join(user.projects), style="bold white"), style="bold blue")
     layout["projects"].update(projects)
 
@@ -63,11 +69,13 @@ def main():
             table = Panel(new.table(user), style="bold blue")
             layout['table'].update(table)
         elif Action == 'Create Task':
-            ImportantFunctions.create_task()
+            ImportantFunctions.create_task(user, new)
             layout['table'].update(table)
         elif Action == 'Logout':
             break
-
+        
+        projects = Panel(Text('\n'.join(user.projects), style="bold white"), style="bold blue")
+        layout["projects"].update(projects)
         os.system('cls' if os.name == 'nt' else 'clear')
 
         console.print(layout)
