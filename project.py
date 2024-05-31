@@ -2,6 +2,8 @@
 from rich.console import Console
 from rich.table import Table
 import json
+import ImportantFunctions
+import UserInfo
 
 
 class Project:
@@ -34,19 +36,18 @@ class Project:
 
     def remove_task(self, task_id):
         if task_id in self.tasks:
-            self.tasks.remove(tasks)
+            self.tasks.remove(task_id)
 
     def assign_task(self, task_id, member):
         if member not in self.members:
             print(f"Member {member} is not part of the project.")
         else:
             for task in self.tasks:
-                if task.id ==  task_id:
-                    task.assign(member)
+                if task.id == task_id:
+                    task.add_assignee(member)
                     print(f"Task {task.title} assigned to {member}.")
 
-    # def table(self, member):
-    def __rich__(self, member):
+    def table(self, member):
         console = Console()
         table = Table(title=self.title)
 
@@ -58,40 +59,32 @@ class Project:
         table.add_column("Priority", style="red", justify="center")
 
         for task in self.tasks:
-            if member in task.assignees:
+            task_data = UserInfo.read_task_info()
+            new_task = ImportantFunctions.find_task(task, task_data)
+            if member in new_task.assignees:
                 table.add_row(
-                    task.title,
-                    task.description,
-                    task.start_date_and_time,
-                    task.end_date_and_time,
-                    task.assignees,
-                    task.priority,
+                    new_task.title,
+                    new_task.description,
+                    new_task.start,
+                    new_task.end,
+                    new_task.assignees,
+                    new_task.priority,
+                    new_task.history,
+                    new_task.comments,
                 )
-            elif len(task.assignees) == 0:
+            elif len(new_task.assignees) == 0:
                 table.add_row(
-                    task.title,
-                    task.description,
-                    task.start_date_and_time,
-                    task.end_date_and_time,
-                    task.assignees,
-                    task.priority,
+                    new_task.title,
+                    new_task.description,
+                    new_task.start,
+                    new_task.end,
+                    new_task.assignees,
+                    new_task.priority,
+                    new_task.history,
+                    new_task.comments,
                 )
 
-        console.print(table)
-        # return table
+        return table
 
     def update_table(self, member):
         pass
-
-    # def save_project_data(self):
-    #     data = {"id":self.id, "title":self.title, "leader":self.leader, "tasks":self.tasks, "members":self.members}
-    #     try:
-    #         with open(f'{self.title}.json', 'w') as file:
-    #             json.dump(data, file, indent=4)
-    #         return True
-    #     except Exception as e:
-    #         print(f"Error saving data: {e}")
-    #         return False
-    
-    # def __del__(self):
-    #     print("Project deleted")
