@@ -241,8 +241,8 @@ def login():
             break
     # Finding the user with the information given and making an object User.
     found_user = find_user(username, user_data, 0)
-    user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"],
-                     ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+    user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                     email=found_user["email"], tasks=found_user.get('tasks', []), projects=found_user.get('projects', []))
     # Checking if the user is banned or not and doing the appropriate thing.
     if user.status == 'on':
         return user
@@ -282,7 +282,7 @@ def create_project(user: User.User):
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         title = input("Enter the title for the project: ")
-        if title != '' and title != '\t' and title != ' ':
+        if title == '' or title == '\t' or title == ' ':
             print("You cannot leave this fild empty or only enter space or tab.")
         else:
             break
@@ -298,8 +298,9 @@ def create_project(user: User.User):
             found_user = find_user(member, user_data, re.match(pattern, member) is not None)
             if found_user != "This user does not exist.":
                 new_project.add_member(found_user["username"])
-                new_user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"],
-                                     ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+                new_user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                                     email=found_user["email"], tasks=found_user.get('tasks', []),
+                                     projects=found_user.get('projects', []))
                 new_user.add_project(new_project.id)
                 user_data.append(new_user.dict)
                 change_user_info(new_user, user_data)
@@ -333,16 +334,30 @@ def create_task(user: User.User, new_project: project.Project):
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         title = input("Enter a title for your task: ")
-        if title != '' and title != '\t' and title != ' ':
+        if title == '' or title == '\t' or title == ' ':
             print("You cannot leave this fild empty or only enter space or tab.")
         else:
             break
     description = input("Add any information you want: ")
-    task = Task.Task(title, description, [], [], [], new_project.id)
+
+    # Setting the start and end time for the task.
+    date_format = "%Y-%m-%d"
+    while True:
+        start = input('Enter the starting date of this task in YYYY-MM-DD format: ')
+        end = input('Enter the ending date of this task in YYYY-MM-DD format: ')
+        start_time = datetime.strptime(start, date_format)
+        end_time = datetime.strptime(end, date_format)
+        if start_time >= end_time:
+            print("starting time cannot be after the ending time.")
+        else:
+            break
+    task = Task.Task(title=title, description=description, assignees=[], history=[], comments=[], project=new_project.id,
+                     start=start, end=end)
     new_project.add_task(task.id)
 
-    print(new_project.members)
     # Adding assignees to the task.
+    print("These are the members of your project: ")
+    print(new_project.members)
     members = input("Enter the username or email of the people you want to assign this task to with a comma between their information: ").split(',')
     for member in members:
         if member != "":
@@ -350,8 +365,9 @@ def create_task(user: User.User, new_project: project.Project):
             if found_user != "This user does not exist.":
                 if valid_assignee(found_user["username"], new_project):
                     task.add_assignee(found_user["username"])
-                    new_user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"],
-                                         ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+                    new_user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                                         email=found_user["email"], tasks=found_user.get('tasks', []),
+                                         projects=found_user.get('projects', []))
                     new_user.add_task(task.id)
                     user_data.append(new_user.dict)
                     change_user_info(new_user, user_data)
@@ -444,7 +460,9 @@ def update_project(new_project: project.Project):
             found_user = find_user(member, user_data, re.match(pattern, member) is not None)
             if found_user != "This user does not exist.":
                 new_project.add_member(found_user["username"])
-                new_user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"], ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+                new_user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                                     email=found_user["email"], tasks=found_user.get('tasks', []),
+                                     projects=found_user.get('projects', []))
                 new_user.add_project(new_project.id)
                 user_data.append(new_user.dict)
                 change_user_info(new_user, user_data)
@@ -462,7 +480,9 @@ def update_project(new_project: project.Project):
             found_user = find_user(member, user_data, re.match(pattern, member) is not None)
             if found_user != "This user does not exist.":
                 new_project.remove_member(found_user["username"])
-                new_user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"], ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+                new_user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                                     email=found_user["email"], tasks=found_user.get('tasks', []),
+                                     projects=found_user.get('projects', []))
                 new_user.remove_project(new_project.id)
                 for i in new_project.tasks:
                     new_user.remove_task(i)
@@ -490,6 +510,22 @@ def update_task(user: User.User, new_project: project.Project, task: Task.Task):
     print("These are all the people who are assigned to do this task: ")
     print(task.assignees)
 
+    # Setting the start and end time for the task.
+    # date_format = "%Y-%m-%d"
+    # while True:
+    #     start = input('Enter the starting date of this task in YYYY-MM-DD format: ')
+    #     end = input('Enter the ending date of this task in YYYY-MM-DD format: ')
+    #     start_time = datetime.strptime(start, date_format)
+    #     end_time = datetime.strptime(end, date_format)
+    #     if start == '' or start == ' ' or start == '\t':
+    #         start = datetime.now().
+    #     if start_time >= end_time:
+    #         print("starting time cannot be after the ending time.")
+    #     else:
+    #         break
+    # task.change_start(start)
+    # task.change_end(end)
+
     # Adding new assignees.
     add_assignees = input("Enter the username or email of the people you want to assign this task to. Enter these information with comma between them: ")
     for assignee in add_assignees:
@@ -498,7 +534,9 @@ def update_task(user: User.User, new_project: project.Project, task: Task.Task):
             if found_user != "This user does not exist.":
                 if valid_assignee(found_user["username"], new_project):
                     task.add_assignee(found_user["username"])
-                    new_user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"], ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+                    new_user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                                         email=found_user["email"], tasks=found_user.get('tasks', []),
+                                         projects=found_user.get('projects', []))
                     new_user.add_task(task.id)
                     user_data.append(new_user.dict)
                     change_user_info(new_user, user_data)
@@ -519,7 +557,9 @@ def update_task(user: User.User, new_project: project.Project, task: Task.Task):
             found_user = find_user(assignee, user_data, re.match(pattern, assignee) is not None)
             if found_user != "This user does not exist." and valid_assignee(found_user["username"], new_project):
                 task.remove_assignee(found_user["username"])
-                new_user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"], ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+                new_user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                                     email=found_user["email"], tasks=found_user.get('tasks', []),
+                                     projects=found_user.get('projects', []))
                 new_user.remove_task(task.id)
                 user_data.append(new_user.dict)
                 change_user_info(new_user, user_data)
@@ -595,7 +635,8 @@ def delete_task(task: Task.Task):
 
     # Removing the task from its project and saving this change.
     found_project = find_project(task.project, project_data)
-    new_project = project.Project(found_project["ID"], found_project["title"], found_project["leader"], ast.literal_eval(found_project["members"]), ast.literal_eval(found_project["tasks"]))
+    new_project = project.Project(id=found_project["ID"], title=found_project["title"], leader=found_project["leader"],
+                                  members=found_project.get("members", []), tasks=found_project.get("tasks", []))
     new_project.remove_task(task.id)
     project_data.append(new_project)
     change_project_info(new_project, project_data)
@@ -603,8 +644,9 @@ def delete_task(task: Task.Task):
     # Removing this task form every assignee and saving this change.
     for assignee in task.assignees:
         found_user = find_user(assignee, user_data, 0)
-        new_user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"],
-                             ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+        new_user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                             email=found_user["email"], tasks=found_user.get('tasks', []),
+                             projects=found_user.get('projects', []))
         new_user.remove_task(task.id)
         user_data.append(new_user)
         change_user_info(new_user, user_data)
@@ -620,18 +662,20 @@ def delete_project(new_project: project.Project):
     # Removing all the tasks related to this project and saving the change.
     for task in new_project.tasks:
         found_task = find_task(task, task_data)
-        new_task = Task.Task(found_task["ID"], found_task["title"], ast.literal_eval(found_task["description"]),
-                             ast.literal_eval(found_task["assignees"]), ast.literal_eval(found_task["history"]),
-                             ast.literal_eval(found_task["comments"]))
+        new_task = Task.Task(title=found_task["title"], description=found_task["description"],
+                             assignees=found_task.get("assignees", []), history=found_task("history", []),
+                             comments=found_task.get("comments", []))
         delete_task(new_task)
 
     # Removing this project form every member of this project and saving the change.
     for member in new_project.members:
         found_user = find_user(member, user_data, 0)
-        new_user = User.User(found_user["username"], found_user["age"], found_user["password"], found_user["email"],
-                             ast.literal_eval(found_user['tasks']), ast.literal_eval(found_user['projects']))
+        new_user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                             email=found_user["email"], tasks=found_user.get('tasks', []),
+                             projects=found_user.get('projects', []))
         new_user.remove_project(new_project.id)
         user_data.append(new_user)
         change_user_info(new_user, user_data)
     change_project_info(new_project, project_data)
 
+login()
