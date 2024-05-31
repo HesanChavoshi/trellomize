@@ -20,12 +20,12 @@ class Status(Enum):
 
 
 class Task:
-    def __init__(self, title, description, assignees: list, history: list, comments: list, project, start=None, end=None):
+    def __init__(self, title, description, assignees: list, history: list, comments: list, project, start, end):
         self.id = str(uuid.uuid4())
         self.title = title
         self.description = description
-        self.start = start or datetime.now()
-        self.end = end or (self.start + timedelta(days=1))
+        self.start = start  # or datetime.now()
+        self.end = end  # or (self.start + timedelta(days=1))
         self.assignees = assignees
         self.priority = Priority.LOW
         self.status = Status.BACKLOG
@@ -55,6 +55,11 @@ class Task:
     def add_history(self, history):
         self.history.append(history)
 
+    def change_start(self, start):
+        self.start = start
+
+    def change_end(self, end):
+        self.end = end
 
 # task1 = Task(title="Implement authentication", description="Implement user authentication in the app")
 # task1.add_assignee("user1")
