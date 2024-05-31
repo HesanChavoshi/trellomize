@@ -28,6 +28,14 @@ class Project:
         if name in self.members:
             self.members.remove(name)
 
+    def add_task(self, task_id):
+        if task_id not in self.tasks:
+            self.tasks.append(task_id)
+
+    def delete_task(self, task_id):
+        if task_id in self.tasks:
+            self.tasks.remove(tasks)
+
     def assign_task(self, task_id, member):
         if member not in self.members:
             print(f"Member {member} is not part of the project.")
@@ -52,19 +60,19 @@ class Project:
             if member in task.assignees:
                 table.add_row(
                     task.title,
-                    task.description,
-                    task.start_date_and_time,
-                    task.end_date_and_time,
-                    task.assignees,
+                    task.info,
+                    task.start,
+                    task.end,
+                    task.assigned_to,
                     task.priority,
                 )
             elif len(task.assignees) == 0:
                 table.add_row(
                     task.title,
-                    task.description,
-                    task.start_date_and_time,
-                    task.end_date_and_time,
-                    task.assignees,
+                    task.info,
+                    task.start,
+                    task.end,
+                    task.assigned_to,
                     task.priority,
                 )
 
@@ -83,3 +91,6 @@ class Project:
     #     except Exception as e:
     #         print(f"Error saving data: {e}")
     #         return False
+    
+    # def __del__(self):
+    #     print("Project deleted")
