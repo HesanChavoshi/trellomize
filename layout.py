@@ -8,6 +8,7 @@ import UserInfo
 import project
 import os
 
+
 def choose_project(projects_info):
     project_titles = [project['title'] for project in projects_info]
     while True:
@@ -72,7 +73,6 @@ def main():
     l_titles = [a['title'] for a in result if a['leader'] == user.username]
     titles = [a['title'] for a in result if a['leader'] != user.username]
 
-
     l_projects = Panel(Text('projets that created by you:\n' + '\n'.join(l_titles), style="bold white"), style="bold blue")
     layout["l_project"].update(l_projects)
 
@@ -113,7 +113,6 @@ def main():
             # layout['table'].update(table)
         elif Action == 'Logout':
             break
-        
 
         result.clear()
         for i in user.projects:
@@ -123,7 +122,6 @@ def main():
         l_titles = [a['title'] for a in result if a['leader'] == user.username]
         titles = [a['title'] for a in result if a['leader'] != user.username]
 
-
         l_projects = Panel(Text('projets that created by you:\n' + '\n'.join(l_titles), style="bold white"), style="bold blue")
         layout["l_project"].update(l_projects)
 
@@ -132,11 +130,11 @@ def main():
 
         table = Panel(selected_project.table(user), style="bold blue")
         layout['table'].update(table)
-            
 
         os.system('cls' if os.name == 'nt' else 'clear')
 
         console.print(layout)
+
 
 if __name__ == "__main__":
     main()
