@@ -42,7 +42,7 @@ class Project:
         else:
             for task in self.tasks:
                 if task.id ==  task_id:
-                    task.assign(member)
+                    task.add_assignee(member)
                     print(f"Task {task.title} assigned to {member}.")
 
     def table(self, member):
@@ -60,37 +60,28 @@ class Project:
             if member in task.assignees:
                 table.add_row(
                     task.title,
-                    task.info,
+                    task.description,
                     task.start,
                     task.end,
-                    task.assigned_to,
+                    task.assignees,
                     task.priority,
+                    task.history,
+                    task.comments,
                 )
             elif len(task.assignees) == 0:
                 table.add_row(
                     task.title,
-                    task.info,
+                    task.description,
                     task.start,
                     task.end,
-                    task.assigned_to,
+                    task.assignees,
                     task.priority,
+                    task.history,
+                    task.comments,
                 )
 
-        # console.print(table)
         return table
 
     def update_table(self, member):
         pass
 
-    # def save_project_data(self):
-    #     data = {"id":self.id, "title":self.title, "leader":self.leader, "tasks":self.tasks, "members":self.members}
-    #     try:
-    #         with open(f'{self.title}.json', 'w') as file:
-    #             json.dump(data, file, indent=4)
-    #         return True
-    #     except Exception as e:
-    #         print(f"Error saving data: {e}")
-    #         return False
-    
-    # def __del__(self):
-    #     print("Project deleted")

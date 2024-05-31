@@ -316,7 +316,7 @@ def create_project(user: User.User):
     user.add_project(new_project.id)
     user_data.append(user.dict)
     change_user_info(user, user_data)
-
+    return new_project
 
 # This one as well gets the information needed and then saves them.
 def create_task(user: User.User, new_project: project.Project):
@@ -678,4 +678,4 @@ def delete_project(new_project: project.Project):
         change_user_info(new_user, user_data)
     change_project_info(new_project, project_data)
 
-login()
+# login()
