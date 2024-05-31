@@ -1,1 +1,5 @@
 venv/
+__pycache__/
+app.log
+projects.json
+users.json

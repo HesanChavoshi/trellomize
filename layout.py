@@ -15,7 +15,7 @@ def choose_project(projects_info):
         if selected_title in project_titles:
             print(f"{selected_title} selected")
             selected_project_info = next(project for project in projects_info if project['title'] == selected_title)
-            selected_project = project.Project(**selected_project_info)
+            selected_project = project.Project(*selected_project_info)
             return selected_project
         else:
             print("This project does not exist.")
