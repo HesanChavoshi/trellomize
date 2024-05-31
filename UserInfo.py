@@ -42,13 +42,13 @@ def read_project_info():
         return data
     except FileNotFoundError:
         print("projects.json file not found.")
-        return None
+        return []
     except json.JSONDecodeError:
         print("Error decoding JSON data.")
-        return None
+        return []
 
 
-def save_project_info(data):
+def save_project_info(data: list):
     try:
         with open('projects.json', 'w') as file:
             json.dump(data, file, indent=4)
@@ -76,10 +76,10 @@ def read_task_info():
         return data
     except FileNotFoundError:
         print("tasks.json file not found.")
-        return None
+        return []
     except json.JSONDecodeError:
         print("Error decoding JSON data.")
-        return None
+        return []
 
 
 def save_task_info(data):
@@ -109,7 +109,7 @@ def read_admin_info():
             data = json.load(file)
         return data
     except FileNotFoundError:
-        print("users.json file not found.")
+        print("admin.json file not found.")
         return []
     except json.JSONDecodeError:
         print("Error decoding JSON data.")

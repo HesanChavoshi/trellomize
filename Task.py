@@ -1,112 +1,73 @@
 from enum import Enum
 import string
+import uuid
+from datetime import datetime, timedelta
 
 
-class Priority:
-    LOW = 1
-    MEDIUM = 2
-    HIGH = 3
-    CRITICAL = 4
+class Priority(Enum):
+    CRITICAL = "CRITICAL"
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
 
 
-class Status:
-    BACKLOG = 1
-    TODO = 2
-    DOING = 3
-    DONE = 4
-    ARCHIVED = 5
+class Status(Enum):
+    BACKLOG = "BACKLOG"
+    TODO = "TODO"
+    DOING = "DOING"
+    DONE = "DONE"
+    ARCHIVED = "ARCHIVED"
 
 
 class Task:
-    def __init__(self, identification_code, title, info, start, end, assigned_to, priority: Priority, status: Status, history, comments):
-        self.identification_code = identification_code
+    def __init__(self, title, description, assignees: list, history: list, comments: list, project, start=None, end=None):
+        self.id = str(uuid.uuid4())
         self.title = title
-        self.info = info
-        self.start = start
-        self.end = end
-        self.assigned_to = assigned_to
-        self.priority = priority
-        self.status = status
+        self.description = description
+        self.start = start or datetime.now()
+        self.end = end or (self.start + timedelta(days=1))
+        self.assignees = assignees
+        self.priority = Priority.LOW
+        self.status = Status.BACKLOG
         self.history = history
         self.comments = comments
+        self.project = project
+        self.dict = {"ID": self.id, "title": self.title, "description": self.description, "start": str(self.start),
+                     "end": str(self.end), "assignees": self.assignees, "priority": self.priority, "status": self.status,
+                     "project": self.project, "history": self.history, "comments": self.comments}
 
-    def set_identification_code(self, identification_code):
-        self.identification_code = identification_code
+    def add_assignee(self, user):
+        self.assignees.append(user)
 
-    def get_identification_code(self):
-        return self.identification_code
+    def remove_assignee(self, user):
+        if user in self.assignees:
+            self.assignees.remove(user)
 
-    def set_name(self, title):
-        self.title = title
+    def change_priority(self, new_priority):
+        self.priority = new_priority
 
-    def get_name(self):
-        return self.title
+    def change_status(self, new_status):
+        self.status = new_status
 
-    def set_info(self, info):
-        self.info = info
+    def add_comment(self, username, comment):
+        self.comments.append(username + ': ' + comment)
 
-    def get_info(self):
-        return self.info
-
-    def set_start(self, start):
-        self.start = start
-
-    def get_start(self):
-        return self.start
-
-    def set_end(self, end):
-        self.end = end
-
-    def get_end(self):
-        return self.end
-
-    def set_assigned_to(self, assigned_to):
-        self.assigned_to = assigned_to
-
-    def get_assigned_to(self):
-        return self.assigned_to
-
-    def set_priority(self, priority):
-        self.priority = priority
-
-    def get_priority(self):
-        return self.priority
-
-    def set_status(self, status):
-        self.status = status
-
-    def get_status(self):
-        return self.status
-
-    def set_history(self, history):
-        self.history = history
-
-    def get_history(self):
-        return self.history
-
-    def set_comments(self, comments):
-        self.comments = comments
-
-    def get_comments(self):
-        return self.comments
+    def add_history(self, history):
+        self.history.append(history)
 
 
-my_task = Task(
-    identification_code=1,
-    title="Sample Task",
-    info="Some task information",
-    start="2024-05-22",
-    end="2024-05-30",
-    assigned_to="John Doe",
-    priority=Priority.HIGH,
-    status=Status.TODO,
-    history=[],
-    comments=[]
-)
-
-# Print task details
-# print(my_task.get_name())
-# print(my_task.get_priority())
-# print(my_task.get_status())
-# print(my_task.get_priority())
-# print(Priority.HIGH)
+# task1 = Task(title="Implement authentication", description="Implement user authentication in the app")
+# task1.add_assignee("user1")
+# task1.change_priority(Priority.HIGH)
+# task1.change_status(Status.DOING)
+# task1.add_comment("user2", "Good progress so far!")
+#
+# print(f"Task ID: {task1.id}")
+# print(f"Title: {task1.title}")
+# print(f"Description: {task1.description}")
+# print(f"Start Time: {task1.start_time}")
+# print(f"End Time: {task1.end_time}")
+# print(f"Assignees: {task1.assignees}")
+# print(f"Priority: {task1.priority}")
+# print(f"Status: {task1.status}")
+# print(f"Comments: {task1.comments}")
