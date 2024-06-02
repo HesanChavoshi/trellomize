@@ -4,11 +4,12 @@ from rich.table import Table
 import json
 import ImportantFunctions
 import UserInfo
+import Task
 
 
 class Project:
-    def __init__(self, id, title, leader, members: list, tasks: list):
-        self.id = id
+    def __init__(self, ID, title, leader, members: list, tasks: list):
+        self.id = ID
         self.title = title
         self.leader = leader
         self.members = members
@@ -60,28 +61,33 @@ class Project:
 
         for task in self.tasks:
             task_data = UserInfo.read_task_info()
-            new_task = ImportantFunctions.find_task(task, task_data)
-            if member in new_task.assignees:
-                table.add_row(
-                    new_task.title,
-                    new_task.description,
-                    new_task.start,
-                    new_task.end,
-                    new_task.assignees,
-                    new_task.priority,
-                    new_task.history,
-                    new_task.comments,
-                )
-            elif len(new_task.assignees) == 0:
-                table.add_row(
-                    new_task.title,
-                    new_task.description,
-                    new_task.start,
-                    new_task.end,
-                    new_task.assignees,
-                    new_task.priority,
-                    new_task.history,
-                    new_task.comments,
+            found_task = ImportantFunctions.find_task(task, task_data)
+            if found_task != "This task does not exist.":
+                new_task = Task.Task(title=found_task["title"], description=found_task["description"],
+                                     assignees=found_task.get("assignees", []), history=found_task.get("history", []),
+                                     comments=found_task.get("comments", []), project=found_task["project"],
+                                     start=found_task["start"], end=found_task["end"])
+                if member in new_task.assignees:
+                    table.add_row(
+                        new_task.title,
+                        new_task.description,
+                        new_task.start,
+                        new_task.end,
+                        new_task.show_assignees(),
+                        new_task.priority,
+                        new_task.show_history(),
+                        new_task.show_comments(),
+                    )
+                elif len(new_task.assignees) == 0:
+                    table.add_row(
+                        new_task.title,
+                        new_task.description,
+                        new_task.start,
+                        new_task.end,
+                        new_task.show_assignees(),
+                        new_task.priority,
+                        new_task.show_history(),
+                        new_task.show_comments(),
                 )
 
         return table

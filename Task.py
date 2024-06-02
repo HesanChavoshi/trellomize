@@ -61,18 +61,23 @@ class Task:
     def change_end(self, end):
         self.end = end
 
-# task1 = Task(title="Implement authentication", description="Implement user authentication in the app")
-# task1.add_assignee("user1")
-# task1.change_priority(Priority.HIGH)
-# task1.change_status(Status.DOING)
-# task1.add_comment("user2", "Good progress so far!")
-#
-# print(f"Task ID: {task1.id}")
-# print(f"Title: {task1.title}")
-# print(f"Description: {task1.description}")
-# print(f"Start Time: {task1.start_time}")
-# print(f"End Time: {task1.end_time}")
-# print(f"Assignees: {task1.assignees}")
-# print(f"Priority: {task1.priority}")
-# print(f"Status: {task1.status}")
-# print(f"Comments: {task1.comments}")
+    def show_assignees(self):
+        assignees_str = ''
+        for assignee in self.assignees:
+            if assignee != '':
+                assignees_str += assignee + ', '
+        return assignees_str
+
+    def show_history(self):
+        history_str = ''
+        for history in self.history:
+            if history != '':
+                history_str += history + ', '
+        return history_str
+
+    def show_comments(self):
+        comments_str = ''
+        for comment in self.comments:
+            if comment != '':
+                comments_str += comment + ', '
+        return comments_str

@@ -9,7 +9,6 @@ import uuid
 import logging
 import inquirer
 import bcrypt
-import ast
 from datetime import datetime, timedelta
 logging.basicConfig(level=logging.INFO, filename='app.log', filemode='a', format='%(name)s - %(levelname)s - %(message)s')
 
@@ -116,7 +115,7 @@ def find_task(info, data):
     for i in data:
         if info == i["ID"]:
             return i
-    return "This project does not exist."
+    return "This task does not exist."
 
 
 # You use this function to save the task's info which have been changed.
@@ -318,6 +317,7 @@ def create_project(user: User.User):
     change_user_info(user, user_data)
     return new_project
 
+
 # This one as well gets the information needed and then saves them.
 def create_task(user: User.User, new_project: project.Project):
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -343,16 +343,24 @@ def create_task(user: User.User, new_project: project.Project):
     # Setting the start and end time for the task.
     date_format = "%Y-%m-%d"
     while True:
-        start = input('Enter the starting date of this task in YYYY-MM-DD format: ')
-        end = input('Enter the ending date of this task in YYYY-MM-DD format: ')
-        start_time = datetime.strptime(start, date_format)
-        end_time = datetime.strptime(end, date_format)
+        start_time = input('Enter the starting date of this task in YYYY-MM-DD format: ')
+        end_time = input('Enter the ending date of this task in YYYY-MM-DD format: ')
+        if start_time == '' or start_time == ' ' or start_time == '\t':
+            start_time_now = datetime.now()
+            start_time = start_time_now.strftime(date_format)
+            if end_time == '' or end_time == ' ' or end_time == '\t':
+                end_time_now = start_time_now + timedelta(days=1)
+                end_time = end_time_now.strftime(date_format)
+                break
+        start_time = datetime.strptime(start_time, date_format)
+        end_time = datetime.strptime(end_time, date_format)
         if start_time >= end_time:
             print("starting time cannot be after the ending time.")
         else:
             break
+    # identification = new_project.id
     task = Task.Task(title=title, description=description, assignees=[], history=[], comments=[], project=new_project.id,
-                     start=start, end=end)
+                     start=start_time, end=end_time)
     new_project.add_task(task.id)
 
     # Adding assignees to the task.
@@ -511,20 +519,26 @@ def update_task(user: User.User, new_project: project.Project, task: Task.Task):
     print(task.assignees)
 
     # Setting the start and end time for the task.
-    # date_format = "%Y-%m-%d"
-    # while True:
-    #     start = input('Enter the starting date of this task in YYYY-MM-DD format: ')
-    #     end = input('Enter the ending date of this task in YYYY-MM-DD format: ')
-    #     start_time = datetime.strptime(start, date_format)
-    #     end_time = datetime.strptime(end, date_format)
-    #     if start == '' or start == ' ' or start == '\t':
-    #         start = datetime.now().
-    #     if start_time >= end_time:
-    #         print("starting time cannot be after the ending time.")
-    #     else:
-    #         break
-    # task.change_start(start)
-    # task.change_end(end)
+    date_format = "%Y-%m-%d"
+    while True:
+        start_time = input('Enter the starting date of this task in YYYY-MM-DD format: ')
+        end_time = input('Enter the ending date of this task in YYYY-MM-DD format: ')
+        if start_time == '' or start_time == ' ' or start_time == '\t':
+            start_time_now = datetime.now()
+            start_time = start_time_now.strftime(date_format)
+            if end_time == '' or end_time == ' ' or end_time == '\t':
+                end_time_now = start_time_now + timedelta(days=1)
+                end_time = end_time_now.strftime(date_format)
+                break
+        start_time = datetime.strptime(start_time, date_format)
+        end_time = datetime.strptime(end_time, date_format)
+        if start >= end:
+            print("starting time cannot be after the ending time.")
+        else:
+            break
+    task = Task.Task(title=title, description=description, assignees=[], history=[], comments=[], project=new_project.id,
+                     start=start_time, end=end_time)
+    new_project.add_task(task.id)
 
     # Adding new assignees.
     add_assignees = input("Enter the username or email of the people you want to assign this task to. Enter these information with comma between them: ")
