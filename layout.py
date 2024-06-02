@@ -6,32 +6,42 @@ import inquirer
 import ImportantFunctions
 import UserInfo
 import project
+import Task
 import os
 
 
 def choose_project(projects_info):
     project_titles = [project['title'] for project in projects_info]
+    print(project_titles)
     while True:
         selected_title = input("Enter the title of your project: ")
+        a1 = 0
+        for index, title in enumerate(project_titles):
+            if selected_title == title:
+                a1 = index
+                break
         if selected_title in project_titles:
             print(f"{selected_title} selected")
-            selected_project_info = next(project for project in projects_info if project['title'] == selected_title)
+            selected_project_info = projects_info[a1].values()
             selected_project = project.Project(*selected_project_info)
+            # print(selected_project_info)
             return selected_project
-        else:
-            print("This project does not exist.")
 
 def choose_task(tasks_info):
     task_titles = [task['title'] for task in tasks_info]
     while True:
         selected_title = input("Enter the title of your project: ")
+        a2 = 0
+        for index, title in enumerate(task_titles):
+            if selected_title == title:
+                a2 = index
+                break
         if selected_title in task_titles:
             print(f"{selected_title} selected")
-            selected_task_info = next(task for task in tasks_info if task['title'] == selected_title)
-            selected_task = project.Project(*selected_task_info)
+            selected_task_info = tasks_info[a2].values()
+            selected_task = Task.Task(*selected_task_info)
+            # print(selected_task_info)
             return selected_task
-        else:
-            print("This task does not exist.")
 
 
 def main():
@@ -79,14 +89,15 @@ def main():
 
     result = []
     for i in user.projects:
-        a = ImportantFunctions.find_project(i, UserInfo.read_project_info())
-        result.append(a)
+        x1 = ImportantFunctions.find_project(i, UserInfo.read_project_info())
+        result.append(x1)
 
     result1 = []
     for i in user.tasks:
-        a = ImportantFunctions.find_task(i, UserInfo.read_task_info())
-        result1.append(a)
+        x2 = ImportantFunctions.find_task(i, UserInfo.read_task_info())
+        result1.append(x2)
 
+    # if len(result) > 0:
     l_titles = [a['title'] for a in result if a['leader'] == user.username]
     titles = [a['title'] for a in result if a['leader'] != user.username]
 
@@ -117,6 +128,7 @@ def main():
             layout['table'].update(table)
         elif Action == 'Choose Project':
             selected_project = choose_project(result)
+            # print(selected_project.leader)
             q = input("Do you want to update the project?(y/n) ")
             if q == 'y':
                 if selected_project.leader == user.username:
