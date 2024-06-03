@@ -24,7 +24,6 @@ def choose_project(projects_info):
             print(f"{selected_title} selected")
             selected_project_info = projects_info[a1].values()
             selected_project = project.Project(*selected_project_info)
-            # print(selected_project_info)
             return selected_project
         print("This project does not exist. ")
 
@@ -40,8 +39,7 @@ def choose_task(tasks_info):
         if selected_title in task_titles:
             print(f"{selected_title} selected")
             selected_task_info = tasks_info[a2].get("ID")
-            task_data = UserInfo.read_task_info()
-            found_task = ImportantFunctions.find_task(selected_task_info, task_data)
+            found_task = ImportantFunctions.find_task(selected_task_info, tasks_info)
             if found_task != "This task does not exist.":
                 new_task = Task.Task(title=found_task["title"], description=found_task["description"],
                                      assignees=found_task.get("assignees", []), history=found_task.get("history", []),
@@ -155,7 +153,7 @@ def main():
             selected_task = choose_task(result1)
             q = input("Do you want to update the task?(y/n) ")
             if q == 'y':
-                if selected_project.leader == user.username and selected_task.id in selected_project.tasks:
+                if selected_project.leader == user.username:
                     ImportantFunctions.update_task(user, selected_project, selected_task)
                 else:
                     print("You can't update ")
@@ -184,9 +182,6 @@ def main():
 
         projects = Panel(Text('Your projects:\n' + '\n'.join(titles), style="bold white"), style="bold blue")
         layout["project"].update(projects)
-
-        # table = Panel(selected_project.table(user), style="bold blue")
-        # layout['table'].update(table)
 
         os.system('cls' if os.name == 'nt' else 'clear')
 
