@@ -7,6 +7,7 @@ import ImportantFunctions
 import UserInfo
 import project
 import Task
+import User
 import os
 import time
 
@@ -50,6 +51,25 @@ def choose_task(tasks_info):
             return new_task
         print("This task does not exist. ")
 
+def admin_action():
+    print("1.Delete all data 2.Ban a user 3.unban a user")
+    a = input("Enter a number: ")
+    if a == 1:
+        ImportantFunctions.admin_delete_all_data()
+    elif a == 2:
+        user_data = UserInfo.read_user_info()
+        username = input("Enter a username to ban: ")
+        found_user = ImportantFunctions.find_user(username, user_data, 0)
+        user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                     email=found_user["email"], tasks=found_user.get('tasks', []), projects=found_user.get('projects', []))
+        ImportantFunctions.admin_ban(user)
+    elif a == 3:
+        username = input("Enter a username to unban: ")
+        found_user = ImportantFunctions.find_user(username, user_data, 0)
+        user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
+                     email=found_user["email"], tasks=found_user.get('tasks', []), projects=found_user.get('projects', []))
+        ImportantFunctions.admin_unban(user)
+
 
 def main():
     console = Console()
@@ -68,6 +88,8 @@ def main():
         user = ImportantFunctions.sign_up()
     elif action == 'Admin Login':
         ImportantFunctions.admin_login()
+        admin_action()
+        return
 
     os.system('cls' if os.name == 'nt' else 'clear')
 
