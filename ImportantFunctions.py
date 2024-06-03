@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, filename='app.log', filemode='a', format
 
 # Checks if the username is valid or not.
 def valid_username(username, data: list):
-    if username != '' and username != '\t' and username != ' ':
+    if username.replace(" ", "") != '' and username.replace(" ", "") != '\t' and username.replace(" ", "") != ' ':
         if '@' in username:
             return 2
         if data is not None or isinstance(data, list):
@@ -201,7 +201,11 @@ def sign_up():
     # Saving the information in users.json and making an object User and returning it.
     os.system('cls' if os.name == 'nt' else 'clear')
     hashed = hash_password(password).decode('utf-8')
-    user = User.User(username, age, hashed, email, [], [])
+    #
+    #
+    user = User.User(username.strip(), age, hashed, email, [], [])
+    #
+    #
     user_data.append(user.dict)
     UserInfo.save_user_info(user_data)
     print("Congratulations, you managed to make an account in our program! We advice you to check out your account because there might be surprise for you;)")
@@ -358,7 +362,6 @@ def create_task(user: User.User, new_project: project.Project):
             print("starting time cannot be after the ending time.")
         else:
             break
-    # identification = new_project.id
     task = Task.Task(title=title, description=description, assignees=[], history=[], comments=[], project=new_project.id,
                      start=start_time, end=end_time)
     new_project.add_task(task.id)
@@ -521,23 +524,18 @@ def update_task(user: User.User, new_project: project.Project, task: Task.Task):
     # Setting the start and end time for the task.
     date_format = "%Y-%m-%d"
     while True:
-        start_time = input('Enter the starting date of this task in YYYY-MM-DD format: ')
         end_time = input('Enter the ending date of this task in YYYY-MM-DD format: ')
-        if start_time == '' or start_time == ' ' or start_time == '\t':
-            start_time_now = datetime.now()
-            start_time = start_time_now.strftime(date_format)
-            if end_time == '' or end_time == ' ' or end_time == '\t':
-                end_time_now = start_time_now + timedelta(days=1)
-                end_time = end_time_now.strftime(date_format)
-                break
-        start_time = datetime.strptime(start_time, date_format)
+        if end_time == '' or end_time == ' ' or end_time == '\t':
+            end_time_now = task.start + timedelta(days=1)
+            end_time = end_time_now.strftime(date_format)
+            break
         end_time = datetime.strptime(end_time, date_format)
-        if start >= end:
-            print("starting time cannot be after the ending time.")
+        if task.start >= end_time:
+            print("Starting time cannot be after the ending time.")
         else:
             break
-    task = Task.Task(title=title, description=description, assignees=[], history=[], comments=[], project=new_project.id,
-                     start=start_time, end=end_time)
+    task = Task.Task(title=task.title, description=task.description, assignees=[], history=[], comments=[],
+                     project=new_project.id, start=task.start, end=end_time)
     new_project.add_task(task.id)
 
     # Adding new assignees.
@@ -641,6 +639,7 @@ def update_task(user: User.User, new_project: project.Project, task: Task.Task):
     log.info("'" + task.title + "' has been updated by '" + user.username + "'")
 
 
+# This function removes a task.
 def delete_task(task: Task.Task):
     # Reading all the files.
     user_data = UserInfo.read_user_info()
@@ -667,6 +666,7 @@ def delete_task(task: Task.Task):
     change_task_info(task, task_data)
 
 
+# This function removes a project.
 def delete_project(new_project: project.Project):
     # Reading all the files.
     user_data = UserInfo.read_user_info()
@@ -691,5 +691,3 @@ def delete_project(new_project: project.Project):
         user_data.append(new_user)
         change_user_info(new_user, user_data)
     change_project_info(new_project, project_data)
-
-# login()
