@@ -396,25 +396,25 @@ def create_task(user: User.User, new_project: project.Project):
     # Determining status and priority of this task.
     status = input("Enter the status of this task (backlog, todo, doing, done, archived): ")
     priority = input("Enter the priority of this task (low, medium, high, critical): ")
-    if status.lower() == 'backlog' or status.lower() == '' or status.lower() == '\t' or status.lower() == ' ':
-        task.change_status(Task.Status.BACKLOG)
+    if status.lower() == 'backlog':
+        task.change_status(Task.Status.BACKLOG.value)
     elif status.lower() == 'todo':
-        task.change_status(Task.Status.TODO)
+        task.change_status(Task.Status.TODO.value)
     elif status.lower() == 'doing':
-        task.change_status(Task.Status.DOING)
+        task.change_status(Task.Status.DOING.value)
     elif status.lower() == 'done':
-        task.change_status(Task.Status.DONE)
+        task.change_status(Task.Status.DONE.value)
     elif status.lower() == 'archived':
-        task.change_status(Task.Status.ARCHIVED)
+        task.change_status(Task.Status.ARCHIVED.value)
 
-    if priority.lower() == 'low' or priority.lower() == '' or priority.lower() == '\t' or priority.lower() == ' ':
-        task.change_priority(Task.Priority.LOW)
+    if priority.lower() == 'low':
+        task.change_priority(Task.Priority.LOW.value)
     elif priority.lower() == 'medium':
-        task.change_priority(Task.Priority.MEDIUM)
+        task.change_priority(Task.Priority.MEDIUM.value)
     elif priority.lower() == 'high':
-        task.change_priority(Task.Priority.HIGH)
+        task.change_priority(Task.Priority.HIGH.value)
     elif priority.lower() == 'critical':
-        task.change_priority(Task.Priority.CRITICAL)
+        task.change_priority(Task.Priority.CRITICAL.value)
 
     # Adding a comment.
     comment = input("Add a comment to the project: ")
@@ -590,33 +590,33 @@ def update_task(user: User.User, new_project: project.Project, task: Task.Task):
     priority = input("Enter the priority which you want to change the current priority to (low, medium, high, critical): ")
     check_priority = False
     previous_priority = task.priority
-    if status.lower() == 'backlog' or status.lower() == '' or status.lower() == '\t' or status.lower() == ' ':
-        task.change_status(Task.Status.BACKLOG)
+    if status.lower() == 'backlog':
+        task.change_status(Task.Status.BACKLOG.value)
         check_status = True
     elif status.lower() == 'todo':
-        task.change_status(Task.Status.TODO)
+        task.change_status(Task.Status.TODO.value)
         check_status = True
     elif status.lower() == 'doing':
-        task.change_status(Task.Status.DOING)
+        task.change_status(Task.Status.DOING.value)
         check_status = True
     elif status.lower() == 'done':
-        task.change_status(Task.Status.DONE)
+        task.change_status(Task.Status.DONE.value)
         check_status = True
     elif status.lower() == 'archived':
-        task.change_status(Task.Status.ARCHIVED)
+        task.change_status(Task.Status.ARCHIVED.value)
         check_status = True
 
-    if priority.lower() == 'low' or priority.lower() == '' or priority.lower() == '\t' or priority.lower() == ' ':
-        task.change_priority(Task.Priority.LOW)
+    if priority.lower() == 'low':
+        task.change_priority(Task.Priority.LOW.value)
         check_priority = True
     elif priority.lower() == 'medium':
-        task.change_priority(Task.Priority.MEDIUM)
+        task.change_priority(Task.Priority.MEDIUM.value)
         check_priority = True
     elif priority.lower() == 'high':
-        task.change_priority(Task.Priority.HIGH)
+        task.change_priority(Task.Priority.HIGH.value)
         check_priority = True
     elif priority.lower() == 'critical':
-        task.change_priority(Task.Priority.CRITICAL)
+        task.change_priority(Task.Priority.CRITICAL.value)
         check_priority = True
 
     if check_status and task.status != previous_status:

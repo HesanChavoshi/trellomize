@@ -27,8 +27,8 @@ class Task:
         self.start = start  # or datetime.now()
         self.end = end  # or (self.start + timedelta(days=1))
         self.assignees = assignees
-        self.priority = Priority.LOW
-        self.status = Status.BACKLOG
+        self.priority = Priority.LOW.value
+        self.status = Status.BACKLOG.value
         self.history = history
         self.comments = comments
         self.project = project
@@ -81,3 +81,27 @@ class Task:
             if comment != '':
                 comments_str += comment + ', '
         return comments_str
+
+
+# date_format = "%Y-%m-%d"
+# start_time_now = datetime.now()
+# start_time = start_time_now.strftime(date_format)
+# end_time_now = start_time_now + timedelta(days=1)
+# end_time = end_time_now.strftime(date_format)
+# task = Task(title="trellomize", description='', assignees=[], history=[], comments=[], project="kjbsdfbjdgdfgfd", start=start_time, end=end_time)
+# print(type(task.id))
+# print(type(task.description))
+# print(type(task.assignees))
+# print(type(task.history))
+# print(type(task.comments))
+# print(type(task.project))
+# print(type(task.start))
+# print(type(task.end))
+# task.change_status(Status.TODO.value)
+# task.change_priority(Priority.HIGH.value)
+# print(type(task.status))
+# print(type(task.priority))
+# print(task.status)
+# print(task.priority)
+# print(task.dict)
+# print(Priority.HIGH.value)
