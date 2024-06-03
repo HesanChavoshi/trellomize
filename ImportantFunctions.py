@@ -390,7 +390,7 @@ def create_task(user: User.User, new_project: project.Project):
             break
 
     # Saving the updated project information.
-    project_data.append(new_project)
+    project_data.append(new_project.dict)
     change_project_info(new_project, project_data)
 
     # Determining status and priority of this task.
@@ -427,22 +427,28 @@ def create_task(user: User.User, new_project: project.Project):
 
 # Changes the status to 'off' in a user which shows whether you are banned or not.
 def admin_ban(user: User.User):
+    user_data = UserInfo.read_user_info()
     log = logging.getLogger(__name__)
     if user.status == 'on':
         user.change_status()
+        user_data.append(user.dict)
+        change_user_info(user, user_data)
         log.info("'" + user.username + "' has been baned.")
     else:
-        return "This user has already been baned."
+        return "This user has already been banned."
 
 
 # Changes the status to 'on' in a user which shows whether you are banned or not.
 def admin_unban(user: User.User):
+    user_data = UserInfo.read_user_info()
     log = logging.getLogger(__name__)
     if user.status == 'off':
         user.change_status()
+        user_data.append(user.dict)
+        change_user_info(user, user_data)
         log.info("'" + user.username + "' has been un-baned.")
     else:
-        return "This user has not been baned."
+        return "This user has not been banned."
 
 
 # This deletes all the information in users.json, projects.json, tasks.json and app.log.
@@ -481,8 +487,6 @@ def update_project(new_project: project.Project):
                 print(found_user)
         else:
             break
-    project_data.append(new_project)
-    change_project_info(new_project, project_data)
 
     # Removing members from the project.
     remove_members = input("Enter the username or email of the people you want to remove from your project. Enter these information with comma between them: ")
@@ -505,7 +509,7 @@ def update_project(new_project: project.Project):
             break
 
     # Saving the information.
-    project_data.append(new_project)
+    project_data.append(new_project.dict)
     change_project_info(new_project, project_data)
     log.info("'" + new_project.title + "' has been updated by '" + new_project.leader + "'")
 
@@ -648,10 +652,10 @@ def delete_task(task: Task.Task):
 
     # Removing the task from its project and saving this change.
     found_project = find_project(task.project, project_data)
-    new_project = project.Project(id=found_project["ID"], title=found_project["title"], leader=found_project["leader"],
+    new_project = project.Project(ID=found_project["ID"], title=found_project["title"], leader=found_project["leader"],
                                   members=found_project.get("members", []), tasks=found_project.get("tasks", []))
     new_project.remove_task(task.id)
-    project_data.append(new_project)
+    project_data.append(new_project.dict)
     change_project_info(new_project, project_data)
 
     # Removing this task form every assignee and saving this change.
@@ -661,7 +665,7 @@ def delete_task(task: Task.Task):
                              email=found_user["email"], tasks=found_user.get('tasks', []),
                              projects=found_user.get('projects', []))
         new_user.remove_task(task.id)
-        user_data.append(new_user)
+        user_data.append(new_user.dict)
         change_user_info(new_user, user_data)
     change_task_info(task, task_data)
 
@@ -688,6 +692,6 @@ def delete_project(new_project: project.Project):
                              email=found_user["email"], tasks=found_user.get('tasks', []),
                              projects=found_user.get('projects', []))
         new_user.remove_project(new_project.id)
-        user_data.append(new_user)
+        user_data.append(new_user.dict)
         change_user_info(new_user, user_data)
     change_project_info(new_project, project_data)
