@@ -8,6 +8,7 @@ import UserInfo
 import project
 import Task
 import os
+import time
 
 
 def choose_project(projects_info):
@@ -103,7 +104,6 @@ def main():
         x2 = ImportantFunctions.find_task(i, UserInfo.read_task_info())
         result1.append(x2)
 
-    # if len(result) > 0:
     l_titles = [a['title'] for a in result if a['leader'] == user.username]
     titles = [a['title'] for a in result if a['leader'] != user.username]
 
@@ -123,7 +123,7 @@ def main():
         Questions = [
             inquirer.List('Action',
                           message="What do you want to do?",
-                          choices=['Create Project','Choose Project', 'Create Task', 'Choose Task', 'Logout'])
+                          choices=['Create Project','Choose Project', 'Create Task', 'Choose Task', 'Delete Project', 'Delete Task', 'Logout'])
         ]
         Action = inquirer.prompt(Questions)['Action']
 
@@ -146,9 +146,13 @@ def main():
             table = Panel(selected_project.table(user), style="bold blue")
             layout['table'].update(table)
         elif Action == 'Create Task':
-            ImportantFunctions.create_task(user, selected_project)
-            table = Panel(selected_project.table(user), style="bold blue")
-            layout['table'].update(table)
+            if selected_project != None:
+                ImportantFunctions.create_task(user, selected_project)
+                table = Panel(selected_project.table(user), style="bold blue")
+                layout['table'].update(table)
+            else:
+                print("You didn't choose any project. ")
+                time.sleep(3)
         elif Action == 'Choose Task':
             selected_task = choose_task(result1)
             q = input("Do you want to update the task?(y/n) ")
@@ -161,6 +165,24 @@ def main():
                 pass
             table = Panel(selected_project.table(user), style="bold blue")
             layout['table'].update(table)
+        elif Action == 'Delete Project':
+            if selected_project.leader == user.username:
+                q = input(f"Are you sure you want to delete {selected_project.title} projecte?(y/n) ")
+                if q == 'y':
+                    ImportantFunctions.delete_project(selected_project)
+                elif q == 'n':
+                    pass
+            else:
+                print("You can't delete this project. ")
+        elif Action == 'Delete Task':
+            if selected_project.leader == user.username:
+                q = input(f"Are you sure you want to delete {selected_task.title} task?(y/n) ")
+                if q == 'y':
+                    ImportantFunctions.delete_task(selected_task)
+                elif q == 'n':
+                    pass
+            else:
+                print("You can't delete this task. ")
         elif Action == 'Logout':
             break
 
