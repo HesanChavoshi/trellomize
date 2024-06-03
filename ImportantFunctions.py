@@ -420,7 +420,7 @@ def create_task(user: User.User, new_project: project.Project):
     comment = input("Add a comment to the project: ")
     if comment != '' and comment != '\t':
         task.add_comment(user.username, comment)
-    task_data.append(task)
+    task_data.append(task.dict)
     UserInfo.save_task_info(task_data)
     log.info("'" + user.username + "' has made the task '" + task.title + "' in project '" + new_project.title + "'")
 
@@ -634,7 +634,7 @@ def update_task(user: User.User, new_project: project.Project, task: Task.Task):
         task.add_comment(user.username, comment)
 
     # Saving the information.
-    task_data.append(task)
+    task_data.append(task.dict)
     change_task_info(task, task_data)
     log.info("'" + task.title + "' has been updated by '" + user.username + "'")
 
