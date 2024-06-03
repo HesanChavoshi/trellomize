@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, filename='app.log', filemode='a', format
 
 # Checks if the username is valid or not.
 def valid_username(username, data: list):
-    if username.replace(" ", "") != '' and username.replace(" ", "") != '\t' and username.replace(" ", "") != ' ':
+    if username.replace(" ", "") != '':
         if '@' in username:
             return 2
         if data is not None or isinstance(data, list):
@@ -27,16 +27,27 @@ def valid_username(username, data: list):
         return 3
 
 
+# Check if age is a number
+def check_int(age):
+    try:
+        int(age)
+        return True
+    except ValueError:
+        return False
+
+
 # Checks if the age is valid or not.
 def valid_age(age):
+    if not check_int(age):
+        return 2
     if age < 15:
-        return False
-    return True
+        return 1
+    return 0
 
 
 # Checks if the password is valid or not.
 def valid_password(password):
-    if len(password) < 10 or len(password) > 30:
+    if len(password) < 10:
         return False
     return True
 
@@ -177,12 +188,14 @@ def sign_up():
         if valid_username(username, user_data) == 1:
             print("This username is in use, please try another one.")
         elif valid_username(username, user_data) == 2:
-            print("You cannot use '@' in your username.")
+            print("You cannot use '@' in your username, please try again.")
         elif valid_username(username, user_data) == 3:
-            print("You cannot leave this fild empty or only enter space or tab.")
+            print("You cannot leave this fild empty or only enter space.")
 
-        if not valid_age(age):
+        if valid_age(age) == 1:
             print("You have to be over 14 to be able to use this program.")
+        elif valid_age(age) == 2:
+            print("Please enter a number for your age.")
 
         if not valid_password(password):
             print("Your password must contain at least 10 characters.")
@@ -193,7 +206,7 @@ def sign_up():
             print("This e-mail is already in use, please try again.")
 
         # If the info are valid we save the information on app.log and break from the loop.
-        if valid_username(username, user_data) == 0 and valid_age(age) and valid_password(password) and valid_email(email, user_data) == 0:
+        if valid_username(username, user_data) == 0 and valid_age(age) == 0 and valid_password(password) and valid_email(email, user_data) == 0:
             log.info("'" + username + "' has made an account.")
             break
         time.sleep(5)
@@ -201,11 +214,7 @@ def sign_up():
     # Saving the information in users.json and making an object User and returning it.
     os.system('cls' if os.name == 'nt' else 'clear')
     hashed = hash_password(password).decode('utf-8')
-    #
-    #
-    user = User.User(username.strip(), age, hashed, email, [], [])
-    #
-    #
+    user = User.User(username, age, hashed, email, [], [])
     user_data.append(user.dict)
     UserInfo.save_user_info(user_data)
     print("Congratulations, you managed to make an account in our program! We advice you to check out your account because there might be surprise for you;)")
@@ -236,16 +245,19 @@ def login():
         if not valid_info(username, password, user_data):
             print("Login was unsuccessful! Wrong username or password.")
             time.sleep(3)
+
         # If the information are valid we break from this loop.
         else:
             print("Login was successful!")
             time.sleep(3)
             log.info("'" + username + "' has login into his/her account.")
             break
+
     # Finding the user with the information given and making an object User.
     found_user = find_user(username, user_data, 0)
     user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
                      email=found_user["email"], tasks=found_user.get('tasks', []), projects=found_user.get('projects', []))
+
     # Checking if the user is banned or not and doing the appropriate thing.
     if user.status == 'on':
         return user
@@ -682,7 +694,8 @@ def delete_project(new_project: project.Project):
         found_task = find_task(task, task_data)
         new_task = Task.Task(title=found_task["title"], description=found_task["description"],
                              assignees=found_task.get("assignees", []), history=found_task("history", []),
-                             comments=found_task.get("comments", []))
+                             comments=found_task.get("comments", []), project=found_task["project"], start=found_task["start"],
+                             end=found_task["end"])
         delete_task(new_task)
 
     # Removing this project form every member of this project and saving the change.
