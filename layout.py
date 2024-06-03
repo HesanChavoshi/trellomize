@@ -13,7 +13,7 @@ import time
 
 
 def choose_project(projects_info):
-    project_titles = [project['title'] for project in projects_info]
+    project_titles = [projects['title'] for projects in projects_info]
     print(project_titles)
     while True:
         selected_title = input("Enter the title of your project: ")
@@ -28,6 +28,7 @@ def choose_project(projects_info):
             selected_project = project.Project(*selected_project_info)
             return selected_project
         print("This project does not exist. ")
+
 
 def choose_task(tasks_info):
     task_titles = [task['title'] for task in tasks_info]
@@ -48,26 +49,27 @@ def choose_task(tasks_info):
                                      comments=found_task.get("comments", []), project=found_task["project"],
                                      start=found_task["start"], end=found_task["end"])
 
-            return new_task
+                return new_task
         print("This task does not exist. ")
 
+
 def admin_action():
+    user_data = UserInfo.read_user_info()
     print("1.Delete all data 2.Ban a user 3.unban a user")
     a = input("Enter a number: ")
     if a == 1:
         ImportantFunctions.admin_delete_all_data()
     elif a == 2:
-        user_data = UserInfo.read_user_info()
         username = input("Enter a username to ban: ")
         found_user = ImportantFunctions.find_user(username, user_data, 0)
         user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
-                     email=found_user["email"], tasks=found_user.get('tasks', []), projects=found_user.get('projects', []))
+                         email=found_user["email"], tasks=found_user.get('tasks', []), projects=found_user.get('projects', []))
         ImportantFunctions.admin_ban(user)
     elif a == 3:
         username = input("Enter a username to unban: ")
         found_user = ImportantFunctions.find_user(username, user_data, 0)
         user = User.User(username=found_user["username"], age=found_user["age"], password=found_user["password"],
-                     email=found_user["email"], tasks=found_user.get('tasks', []), projects=found_user.get('projects', []))
+                         email=found_user["email"], tasks=found_user.get('tasks', []), projects=found_user.get('projects', []))
         ImportantFunctions.admin_unban(user)
 
 
@@ -76,8 +78,8 @@ def main():
 
     questions = [
         inquirer.List('action',
-                    message="What do you want to do?",
-                    choices=['Login', 'Signup', 'Admin Login'])
+                      message="What do you want to do?",
+                      choices=['Login', 'Signup', 'Admin Login'])
     ]
     action = inquirer.prompt(questions)['action']
 
@@ -139,13 +141,11 @@ def main():
 
     selected_project = None
     selected_task = None
-    new = None
-    table = None
     while True:
         Questions = [
             inquirer.List('Action',
                           message="What do you want to do?",
-                          choices=['Create Project','Choose Project', 'Create Task', 'Choose Task', 'Delete Project', 'Delete Task', 'Logout'])
+                          choices=['Create Project', 'Choose Project', 'Create Task', 'Choose Task', 'Delete Project', 'Delete Task', 'Logout'])
         ]
         Action = inquirer.prompt(Questions)['Action']
 
@@ -168,7 +168,7 @@ def main():
             table = Panel(selected_project.table(user), style="bold blue")
             layout['table'].update(table)
         elif Action == 'Create Task':
-            if selected_project != None:
+            if selected_project is not None:
                 ImportantFunctions.create_task(user, selected_project)
                 table = Panel(selected_project.table(user), style="bold blue")
                 layout['table'].update(table)
