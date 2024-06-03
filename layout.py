@@ -26,11 +26,12 @@ def choose_project(projects_info):
             selected_project = project.Project(*selected_project_info)
             # print(selected_project_info)
             return selected_project
+        print("This project does not exist. ")
 
 def choose_task(tasks_info):
     task_titles = [task['title'] for task in tasks_info]
     while True:
-        selected_title = input("Enter the title of your project: ")
+        selected_title = input("Enter the title of your task: ")
         a2 = 0
         for index, title in enumerate(task_titles):
             if selected_title == title:
@@ -38,10 +39,17 @@ def choose_task(tasks_info):
                 break
         if selected_title in task_titles:
             print(f"{selected_title} selected")
-            selected_task_info = tasks_info[a2].values()
-            selected_task = Task.Task(*selected_task_info)
-            # print(selected_task_info)
-            return selected_task
+            selected_task_info = tasks_info[a2].get("ID")
+            task_data = UserInfo.read_task_info()
+            found_task = ImportantFunctions.find_task(selected_task_info, task_data)
+            if found_task != "This task does not exist.":
+                new_task = Task.Task(title=found_task["title"], description=found_task["description"],
+                                     assignees=found_task.get("assignees", []), history=found_task.get("history", []),
+                                     comments=found_task.get("comments", []), project=found_task["project"],
+                                     start=found_task["start"], end=found_task["end"])
+
+            return new_task
+        print("This task does not exist. ")
 
 
 def main():
@@ -101,7 +109,7 @@ def main():
     l_titles = [a['title'] for a in result if a['leader'] == user.username]
     titles = [a['title'] for a in result if a['leader'] != user.username]
 
-    l_projects = Panel(Text('projets that created by you:\n' + '\n'.join(l_titles), style="bold white"), style="bold blue")
+    l_projects = Panel(Text('projects that created by you:\n' + '\n'.join(l_titles), style="bold white"), style="bold blue")
     layout["l_project"].update(l_projects)
 
     projects = Panel(Text('Your projects:\n' + '\n'.join(titles), style="bold white"), style="bold blue")
@@ -135,7 +143,6 @@ def main():
                     ImportantFunctions.update_project(selected_project)
                 else:
                     print("You can't update ")
-                    pass
             elif q == 'n':
                 pass
             table = Panel(selected_project.table(user), style="bold blue")
@@ -152,7 +159,6 @@ def main():
                     ImportantFunctions.update_task(user, selected_project, selected_task)
                 else:
                     print("You can't update ")
-                    pass
             elif q == 'n':
                 pass
             table = Panel(selected_project.table(user), style="bold blue")
@@ -173,7 +179,7 @@ def main():
         l_titles = [a['title'] for a in result if a['leader'] == user.username]
         titles = [a['title'] for a in result if a['leader'] != user.username]
 
-        l_projects = Panel(Text('projets that created by you:\n' + '\n'.join(l_titles), style="bold white"), style="bold blue")
+        l_projects = Panel(Text('projects that created by you:\n' + '\n'.join(l_titles), style="bold white"), style="bold blue")
         layout["l_project"].update(l_projects)
 
         projects = Panel(Text('Your projects:\n' + '\n'.join(titles), style="bold white"), style="bold blue")
