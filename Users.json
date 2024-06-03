@@ -1,1 +1,15 @@
-[]
+[
+    {
+        "username": "hesan",
+        "age": 19,
+        "password": "$2b$12$0zkIh/uzgGHhrmOF0HoUeeR.rerhWxzhCKYMiM1MgdNsoLumIi8eW",
+        "email": "djfhuuwe@gmail.com",
+        "status": "on",
+        "tasks": [
+            "ff4de5e3-75f8-4004-a3f7-9ff698215ec3"
+        ],
+        "projects": [
+            "91a7be79-49d9-493b-a17f-ce9c63d5281a"
+        ]
+    }
+]

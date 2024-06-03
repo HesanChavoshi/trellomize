@@ -1,7 +1,7 @@
 # Project.py
 from rich.console import Console
 from rich.table import Table
-import json
+# import json
 import ImportantFunctions
 import UserInfo
 import Task
@@ -58,6 +58,8 @@ class Project:
         table.add_column("End date and time", style="green", justify="center")
         table.add_column("Assignees", style="blue", justify="center")
         table.add_column("Priority", style="red", justify="center")
+        table.add_column("History", style="red", justify="center")
+        table.add_column("Comments", style="red", justify="center")
 
         for task in self.tasks:
             task_data = UserInfo.read_task_info()
@@ -67,7 +69,7 @@ class Project:
                                      assignees=found_task.get("assignees", []), history=found_task.get("history", []),
                                      comments=found_task.get("comments", []), project=found_task["project"],
                                      start=found_task["start"], end=found_task["end"])
-                if member in new_task.assignees:
+                if member.username in new_task.assignees:
                     table.add_row(
                         new_task.title,
                         new_task.description,
